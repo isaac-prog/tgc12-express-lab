@@ -43,7 +43,7 @@ app.get('/pet/create', function(req,res){
     res.render('create_pet')
 })
 
-
+// process the form
 app.post('/pet/create', async function(req,res){
     let petName = req.body.petName;
     let category = req.body.petCategory;
@@ -68,7 +68,49 @@ app.post('/pet/create', async function(req,res){
       let response = await axios.post(baseURL + "/pet", newPet);
       res.send(response.data);
 })
-// process the form
+
+// to display a form that shows the existing pet information
+app.get('/pet/:petID/update', async function(req,res){
+    // 1. fetch the existing pet information from the database
+    let petID = req.params.petID;
+    let response = await axios.get(baseURL + '/pet/' + petID);
+  
+    // 2. populate the form with the existing pet's information
+    res.render('edit_pet',{
+        'pet': response.data
+    })
+
+})
+
+// update the pet (i.e, process the form)
+app.post('/pet/:petID/update', async function(req,res){
+   
+    // fetech the existing pet information
+    let response = await axios.get(baseURL + '/pet/' + req.params.petID);
+    let oldPet = response.data;
+
+    // fetch the new petName and the new petCategory
+    let newPetName = req.body.petName;
+    let newPetCategory = req.body.petCategory;
+
+    let newPet = {
+        "id": req.params.petID,
+        "category": {
+          "id": oldPet.category.id,
+          "name": newPetCategory
+        },
+        "name": newPetName,
+        "photoUrls": [
+          "n/a"
+        ],
+        "tags": [
+        ],
+        "status": "available"
+      }
+      response = await axios.put(baseURL + '/pet', newPet);
+      // go to the /pets URL
+      res.redirect('/pets')
+})
 
 // 3. START SERVER
 app.listen(3000, function(){

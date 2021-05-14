@@ -16,7 +16,9 @@
         {{#each allPets}}
         <tr>
             <td>{{this.id}}</td>
-            <td>{{this.name}}</td>
+            <td>
+                <a href="/pet/{{this.id}}/update">{{this.name}}</a>
+            </td>
             <td>{{this.category.name}}</td>
             <td>
                 {{#each this.tags}}
