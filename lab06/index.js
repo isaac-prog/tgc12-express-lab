@@ -84,6 +84,20 @@ app.get('/bmi', function(req,res){
     res.render('bmi')
 })
 
+
+app.post('/bmi', function(req,res){
+    let weight = parseFloat(req.body.weight);
+    let height = parseFloat(req.body.height);
+    let unit = req.body.unit;
+    let bmi;
+    if (unit=="metric") {
+        bmi = weight/height**2;
+    } else {
+        bmi = (weight/height**2) * 702;
+    }
+    res.send("<h1>Your BMI is " + bmi);
+})
+
 // one route to process the form
 
 // 3. START SERVER
