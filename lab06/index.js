@@ -78,6 +78,14 @@ app.post('/contact-us', function(req,res){
 
 })
 
+
+// one route to show the form
+app.get('/bmi', function(req,res){
+    res.render('bmi')
+})
+
+// one route to process the form
+
 // 3. START SERVER
 app.listen(3000, function(){
     console.log("Server has started")
