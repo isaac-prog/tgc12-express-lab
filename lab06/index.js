@@ -44,6 +44,7 @@ app.post('/contact-us', function(req,res){
     let lastName = req.body.lname;
     let email = req.body.email;
     let enquiry = req.body.enquiry;
+    let country = req.body.country;
 
     console.log(req.body.hearAbout);
 
