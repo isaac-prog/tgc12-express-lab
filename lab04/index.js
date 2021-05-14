@@ -15,6 +15,10 @@ app.use(express.static('public'))
 wax.on(hbs.handlebars);
 wax.setLayoutPath('./views/layouts')
 
+hbs.handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+    return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
+
 // ROUTES HERE!
 app.get('/', function(req,res){
     res.render('index.hbs')
@@ -28,6 +32,14 @@ app.get('/hello/:name', function(req,res){
         'lucky': luckyNumber
     })
 
+})
+
+app.get('/fruits', function(req,res){
+    let favourite="apples";
+    res.render('fruits.hbs', {
+        'fruits':['apples', 'bananas', 'oranges'],
+        'favouriteFruit': favourite
+    })
 })
 
 // 3. Run server
