@@ -112,6 +112,25 @@ app.post('/pet/:petID/update', async function(req,res){
       res.redirect('/pets')
 })
 
+// display a confirmation form
+app.get('/pet/:petID/delete', async function(req,res){
+    let petID = req.params.petID;
+    let response = await axios.get(baseURL + '/pet/' + petID);
+    console.log(response);
+    let pet = response.data;
+    res.render('delete_pet', {
+        'pet': pet
+    })
+})
+
+// process the delete
+app.post('/pet/:petID/delete', async function(req,res){
+    let petID = req.params.petID;
+    let response = await axios.delete(baseURL + '/pet/' + petID);
+    res.redirect('/pets')
+})
+
+
 // 3. START SERVER
 app.listen(3000, function(){
     console.log("Server has started")
