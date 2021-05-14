@@ -38,6 +38,38 @@ app.get('/pets', async function(req,res){
     })
 })
 
+// display the form
+app.get('/pet/create', function(req,res){
+    res.render('create_pet')
+})
+
+
+app.post('/pet/create', async function(req,res){
+    let petName = req.body.petName;
+    let category = req.body.petCategory;
+
+    let newPet = {
+        "id": Math.floor(Math.random() * 100000 + 10000),
+        "category": {
+          "id": Math.floor(Math.random() * 1000000 + 100000),
+          "name": category
+        },
+        "name": petName,
+        "photoUrls": [
+          "n/a"
+        ],
+        "tags": [
+        ],
+        "status": "available"
+      }
+
+      // save the new pet to the Pet API database
+      // later we will replace saving to our own database
+      let response = await axios.post(baseURL + "/pet", newPet);
+      res.send(response.data);
+})
+// process the form
+
 // 3. START SERVER
 app.listen(3000, function(){
     console.log("Server has started")
