@@ -47,13 +47,36 @@ app.get('/food/add', (req,res)=>{
 })
 
 app.post('/food/add', async (req,res)=>{
-    let foodName = req.body.foodName;
-    let calories = req.body.calories;
-   
+    // let foodName = req.body.foodName;
+    // let calories = req.body.calories;
+
+    let {foodName, calories, tags} = req.body;
+
+    // check if tags is undefined. If undefined, set it to be an empty array
+    tags = tags || [];
+
+    // if tag is a single value, convert it to be an array consisting of the value
+    // as its only element
+    tags = Array.isArray(tags) ? tags : [tags]
+
+    // assume the tags variable contains "snack"
+    // tags = Array.isArray(tags) ? tags : [tags]
+    //      => Array.isArray("snack") ? "snack" : ["snack"]
+    //      => false ? "snack" : ["snack"]
+    //      => ["snack"]
+    // tags => ["snack"]
+
+    // assume the tags variable contains ["unhealthy", "homecooked"]
+    // tags = Array.isArray(tags) ? tags : [tags]
+    //      => Array.isArray(["unhealthy", "homecooked"]) ? ["unhealthy", "homecooked"] : [["unhealthy", "homecooked"]]
+    //      => true ? ["unhealthy", "homecooked"] : [["unhealthy", "homecooked"]]
+    //      => ["unhealthy", "homecooked"] 
+    // tags = ["unhealthy", "homecooked"]
+
     let db = MongoUtil.getDB();
+
     await db.collection('food').insertOne({
-        'foodName': foodName,
-        'calories': calories
+       foodName, calories, tags
     });
 
     res.send("Food added")
