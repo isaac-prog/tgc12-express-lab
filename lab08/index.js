@@ -12,6 +12,8 @@ dotenv.config();
 // require in MongoUtil
 const MongoUtil = require('./MongoUtil')
 
+async function main() {
+
 // 1. create the express application
 let app = express();
 
@@ -30,17 +32,38 @@ app.use(express.urlencoded({
     extended: false
 }))
 
-// Test if the database can connect
-MongoUtil.connect(process.env.MONGO_URI, 'food_tracker');
+// 6. connect to Mongo
+await MongoUtil.connect(process.env.MONGO_URI, 'food_tracker');
 
-// 6. routes
+// 7. Define the routes
 
 // root route
 app.get('/', (req,res)=> {
     res.send("Hello World")
 })
 
-// 7. start the server
+app.get('/food/add', (req,res)=>{
+    res.render('add_food')
+})
+
+app.post('/food/add', async (req,res)=>{
+    let foodName = req.body.foodName;
+    let calories = req.body.calories;
+   
+    let db = MongoUtil.getDB();
+    await db.collection('food').insertOne({
+        'foodName': foodName,
+        'calories': calories
+    });
+
+    res.send("Food added")
+
+})
+
+// 8. start the server
 app.listen(3000, ()=>{
     console.log("Server has started")
 })
+}
+
+main();
