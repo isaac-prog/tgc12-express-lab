@@ -91,7 +91,7 @@ async function main() {
             foodName, calories, tags
         });
 
-        res.send("Food added")
+        res.redirect('/food')
 
     })
 
@@ -133,7 +133,28 @@ async function main() {
                 foodName, calories, tags
             }
         })
-        res.send("Food has been updated")
+        res.redirect('/food')
+    })
+
+    app.get('/food/:foodid/delete', async (req,res)=>{
+        let db = MongoUtil.getDB();
+
+        let foodRecord = await db.collection('food').findOne({
+            '_id':ObjectId(req.params.foodid)
+        })
+
+        res.render('delete_food',{
+            foodRecord
+        })
+    })
+
+    app.post('/food/:foodid/delete', async(req,res)=>{
+        let db = MongoUtil.getDB();
+        await db.collection('food').deleteOne({
+            '_id':ObjectId(req.params.foodid)
+        })
+
+        res.redirect('/food')
     })
 
     // 8. start the server
