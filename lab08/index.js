@@ -83,6 +83,15 @@ app.post('/food/add', async (req,res)=>{
 
 })
 
+app.get('/food', async (req,res)=>{
+    let db = MongoUtil.getDB();
+    // find all the food and convert the results to an array
+    let results = await db.collection('food').find().toArray();
+    res.render('food',{
+        'foodRecords': results
+    })
+})
+
 // 8. start the server
 app.listen(3000, ()=>{
     console.log("Server has started")
