@@ -1,6 +1,16 @@
 const express = require('express')
 const hbs = require('hbs')
 const wax = require('wax-on')
+// require('dotenv').config();
+
+// transfer all the variables
+// in .env to process.env so that
+// we can refer to it later
+const dotenv = require('dotenv');
+dotenv.config();
+
+// require in MongoUtil
+const MongoUtil = require('./MongoUtil')
 
 // 1. create the express application
 let app = express();
@@ -19,6 +29,9 @@ wax.setLayoutPath('./views/layouts')
 app.use(express.urlencoded({
     extended: false
 }))
+
+// Test if the database can connect
+MongoUtil.connect(process.env.MONGO_URI, 'food_tracker');
 
 // 6. routes
 
