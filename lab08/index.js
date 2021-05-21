@@ -15,6 +15,13 @@ const MongoUtil = require('./MongoUtil')
 
 const helpers = require('handlebars-helpers');
 
+async function getFoodById(id) {
+    let db = MongoUtil.getDB();
+    return await db.collection('food').findOne({
+        "_id":ObjectId(id)
+    })
+}
+
 async function main() {
 
     // 1. create the express application
@@ -165,9 +172,7 @@ async function main() {
     // render a form that allows the user to add note
     app.get('/food/:foodid/notes/add', async (req,res)=>{
         let db = MongoUtil.getDB();
-        let foodRecord = await db.collection('food').findOne({
-            _id:ObjectId(req.params.foodid)
-        })
+        let foodRecord = await getFoodById(req.params.foodid)
 
         res.render('add_note',{
             'food': foodRecord
@@ -188,6 +193,53 @@ async function main() {
             }
         })
         res.redirect('/food')
+    })
+
+    // see the notes and details of a food document
+    app.get('/food/:foodid', async(req,res)=>{
+        let db = MongoUtil.getDB();
+        let foodRecord = await getFoodById(req.params.foodid);
+        res.render('food_details',{
+            'food': foodRecord
+        })
+    })
+
+    // display the form to update a note
+    app.get('/notes/:noteid/edit', async(req,res)=>{
+        let db = MongoUtil.getDB();
+        let foodRecord = await db.collection('food').findOne({
+            "notes._id":ObjectId(req.params.noteid)
+        },{
+            'projection':{
+                'notes': {
+                    '$elemMatch': {
+                        '_id':ObjectId(req.params.noteid)
+                    }
+                }
+            }
+        })
+        let noteToEdit = foodRecord.notes[0];
+        res.render('edit_note',{
+            'note': noteToEdit
+        })
+    })
+
+    app.post('/notes/:noteid/edit', async (req,res)=>{
+        let db = MongoUtil.getDB();
+
+        let foodRecord = await db.collection('food').findOne({
+            "notes._id":ObjectId(req.params.noteid)
+        });
+
+        await db.collection('food').updateOne({
+            'notes._id':ObjectId(req.params.noteid)
+        },{
+            '$set':{
+                'notes.$.content':req.body.content
+            }
+        })
+
+        res.redirect('/food/'+foodRecord._id);
     })
 
     // 8. start the server

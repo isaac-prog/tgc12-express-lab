@@ -18,7 +18,9 @@
      
         {{#each foodRecords}}
            <tr>
-                <td>{{this.foodName}}</td>
+                <td>
+                    <a href="/food/{{this._id}}">{{this.foodName}}</a>
+                </td>
                 <td>{{this.calories}}</td>
                 <td>{{join this.tags ", "}}</td>
                 <td>
