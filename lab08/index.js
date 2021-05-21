@@ -112,6 +112,11 @@ async function main() {
         let foodRecord = await db.collection('food').findOne({
             "_id": ObjectId(foodId)
         })
+
+        if(! Array.isArray(foodRecord.tags)) {
+            foodRecord.tags = [];
+        }
+
         res.render('edit_food',{
             foodRecord
         })
@@ -154,6 +159,34 @@ async function main() {
             '_id':ObjectId(req.params.foodid)
         })
 
+        res.redirect('/food')
+    })
+
+    // render a form that allows the user to add note
+    app.get('/food/:foodid/notes/add', async (req,res)=>{
+        let db = MongoUtil.getDB();
+        let foodRecord = await db.collection('food').findOne({
+            _id:ObjectId(req.params.foodid)
+        })
+
+        res.render('add_note',{
+            'food': foodRecord
+        })
+    })
+
+    app.post('/food/:foodid/notes/add', async(req,res)=>{
+        let db = MongoUtil.getDB();
+        let noteContent = req.body.content;
+        await db.collection('food').updateOne({
+            '_id': ObjectId(req.params.foodid)
+        },{
+            '$push':{
+                'notes':{
+                    '_id':ObjectId(),
+                    'content': noteContent
+                }
+            }
+        })
         res.redirect('/food')
     })
 

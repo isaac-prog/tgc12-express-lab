@@ -22,8 +22,10 @@
                 <td>{{this.calories}}</td>
                 <td>{{join this.tags ", "}}</td>
                 <td>
+                     <a href="/food/{{this._id}}/notes/add" class="btn btn-success">Add Note</a>
                     <a href="/food/{{this._id}}/edit" class="btn btn-primary">Edit</a>
                     <a href="/food/{{this._id}}/delete" class="btn btn-danger">Delete</a>
+                   
                 </td>
             </tr>
         {{/each}}
